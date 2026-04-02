@@ -1,0 +1,41 @@
+name: 怀柔天气数据自动爬取
+
+on:
+  # 每天北京时间 8:00 运行（UTC时间 0:00）
+  schedule:
+    - cron: '0 0 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  fetch-weather:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. 检出代码
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    # 2. 设置 Python 环境
+    - name: 设置 Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    # 3. 安装依赖
+    - name: 安装依赖
+      run: |
+        pip install -r requirements.txt
+    
+    # 4. 运行爬虫脚本
+    - name: 运行爬虫
+      run: python weather_hourly.py
+    
+    # 5. 提交并推送数据到仓库
+    - name: 提交数据
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/
+        git diff --quiet && git diff --staged --quiet || git commit -m "自动更新天气数据 $(date +'%Y-%m-%d')"
+        git push
