@@ -29,7 +29,7 @@ jobs:
     
     # 4. 运行爬虫脚本
     - name: 运行爬虫
-      run: python weather_hourly.py
+      run: weather_hour.py
     
     # 5. 提交并推送数据到仓库
     - name: 提交数据
